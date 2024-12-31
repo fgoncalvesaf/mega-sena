@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mega-Sena</title>
+<style>
+#grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+}
+.numero {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+.selecionado {
+  background-color: yellow;
+}
+#apostas {
+  margin-top: 20px;
+}
+.aposta {
+  margin-bottom: 10px;
+}
+#blocoApostas {
+    width: 300px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+
+<h1>Mega-Sena</h1>
+
+<div id="grid">
+</div>
+
+<h2>Apostas</h2>
+<div id="apostas">
+</div>
+
+<h2>Adicionar Apostas (bloco de texto)</h2>
+<textarea id="blocoApostas"></textarea><br>
+<button type="button" onclick="adicionarApostasPorBloco()">Adicionar Apostas</button>
+
+<script>
+const grid = document.getElementById('grid');
+const apostasDiv = document.getElementById('apostas');
+const blocoApostas = document.getElementById('blocoApostas');
+let apostas = [];
+
+for (let i = 1; i <= 60; i++) {
+  const numeroDiv = document.createElement('div');
+  numeroDiv.classList.add('numero');
+  numeroDiv.textContent = i;
+  numeroDiv.addEventListener('click', () => {
+    numeroDiv.classList.toggle('selecionado');
+    atualizarApostas();
+  });
+  grid.appendChild(numeroDiv);
+}
+
+function adicionarApostasPorBloco() {
+    const linhas = blocoApostas.value.trim().split('\n');
+    linhas.forEach(linha => {
+        const numerosStr = linha.trim().split(/\s+/); // Divide por um ou mais espaços
+        let aposta = [];
+        numerosStr.forEach(numStr => {
+            const num = parseInt(numStr);
+            if (!isNaN(num) && num >= 1 && num <= 60) { // Verifica se é um número válido entre 1 e 60
+                if(!aposta.includes(num)){
+                    aposta.push(num);
+                } else {
+                    alert(`Número repetido na aposta: ${linha}`);
+                    aposta = [];
+                    return;
+                }
+            } else if (numStr !== ""){
+                alert(`Número inválido na aposta: ${linha}`);
+                aposta = [];
+                return;
+            }
+        });
+        if(aposta.length > 0){
+            aposta.sort((a,b)=> a-b);
+            apostas.push(aposta);
+        }
+    });
+
+    blocoApostas.value = "";
+    atualizarApostas();
+}
+
+function atualizarApostas() {
+    apostasDiv.innerHTML = "";
+    const numerosSelecionados = Array.from(document.querySelectorAll("#grid .selecionado")).map(num => parseInt(num.textContent));
+
+    apostas.forEach((aposta, index) => {
+        const apostaDiv = document.createElement("div");
+        apostaDiv.classList.add("aposta");
+        apostaDiv.textContent = `Aposta ${index+1}: `;
+        let numerosMarcados = 0;
+        aposta.forEach(numAposta => {
+            if (numerosSelecionados.includes(numAposta)) {
+              numerosMarcados++;
+            }
+        });
+
+        apostaDiv.textContent += aposta.join(", ");
+        apostaDiv.textContent += ` (${numerosMarcados} números marcados)`;
+        apostasDiv.appendChild(apostaDiv);
+    });
+}
+</script>
+
+</body>
+</html>
