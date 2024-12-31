@@ -101,7 +101,7 @@ function atualizarApostas() {
     apostas.forEach((aposta, index) => {
         const apostaDiv = document.createElement("div");
         apostaDiv.classList.add("aposta");
-        apostaDiv.textContent = `Aposta ${index+1}: `;
+        apostaDiv.textContent = ` ${index+1}: `;
         let numerosMarcados = 0;
         aposta.forEach(numAposta => {
             if (numerosSelecionados.includes(numAposta)) {
@@ -110,7 +110,7 @@ function atualizarApostas() {
         });
 
         apostaDiv.textContent += aposta.join(", ");
-        apostaDiv.textContent += ` (${numerosMarcados} números marcados)`;
+        apostaDiv.textContent += ` (${numerosMarcados})`;
         apostasDiv.appendChild(apostaDiv);
     });
 }
